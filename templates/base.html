@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        body {
+            width: 1000px;
+            margin: 0 auto;
+            padding: 0;
+        }
+
+        table, td, th {
+            border: 1px solid pink;
+        }
+
+        .nav {
+            background-color: chartreuse;
+            height: 100px;
+        }
+
+        .container {
+            background-color: darkcyan;
+            width: 1000px;
+            float: left;
+        }
+
+        .content {
+            background-color: dimgray;
+            width: 800px;
+            height: 500px;
+            float: left;
+        }
+
+        .sidebar {
+            background-color: gold;
+            width: 200px;
+            height: 500px;
+            float: left;
+        }
+
+        .footbar {
+            background-color: cadetblue;
+            width: 1000px;
+
+        }
+    </style>
+</head>
+<body>
+<div class="nav">
+    <a href="/">首页</a>
+    <a href="#">教师</a>
+    <a href="#">考试</a>
+    <a href="#">学生</a>
+</div>
+<div class="container">
+    <div class="content">{% block content %}{% endblock %}</div>
+    <div class="sidebar">{% block sidebar %}{% endblock %}</div>
+</div>
+<div class="footbar">
+    ©2020 Baidu (京)-经营性-2017-0020京公网安备11000002000001号京ICP证030173号
+</div>
+</body>
+</html>

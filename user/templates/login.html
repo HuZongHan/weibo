@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>登录页面</h1>
+<form action="/user/info">
+    <lable>姓名:</lable>
+    <input type="text" name="name">
+    <br>
+    <lable>性别:</lable>
+    <input type="text" name="gender">
+    <br>
+    <lable>账号：</lable>
+    <input type="text" name="user">
+    <br>
+    <lable>密码：</lable>
+    <input type="password" name="password">
+    <br>
+    <input type="submit">
+</form>
+
+{% endblock %}
