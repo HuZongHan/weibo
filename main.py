@@ -1,9 +1,10 @@
 from flask import Flask
-from flask_script import Manager
 from flask_migrate import Migrate, MigrateCommand
+from flask_script import Manager
 
 from libs.orm import db
 from user.views import user_bp
+
 
 app = Flask(__name__)
 app.secret_key = r'@#$T%DTRDYugwuy7w247dq7*&^t7&^*^*^'
