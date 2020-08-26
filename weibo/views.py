@@ -2,11 +2,15 @@ from flask import Blueprint
 from flask import render_template
 from flask import request
 from flask import redirect
-
+import datetime
+from flask import session
 from libs.pas import login_required
 
 from libs.orm import db
 from weibo.models import Weibo
+from flask import abort
+from math import ceil
+from user.models import User
 
 weibo_bp = Blueprint('weibo',
                      __name__,
@@ -17,21 +21,93 @@ weibo_bp = Blueprint('weibo',
 
 @weibo_bp.route('/index')
 def index():
-    return render_template('index.html')
+    '''微博首页'''
+    page = int(request.args.get('page', 1))
+    per_page = 30
+    offset = per_page * (page - 1)
+    wb_list = Weibo.query.order_by(Weibo.updated.desc()).limit(per_page).offset(offset)
+
+    max_page = ceil(Weibo.query.count() / per_page)  # 最大页码
+
+    if page <= 3:
+        start, end = 1, 7  # 起始处的页码范围
+    elif page > (max_page - 3):
+        start, end = max_page - 6, max_page  # 结尾处的页码范围
+    else:
+        start, end = (page - 3), (page + 3)
+
+    pages = range(start, end + 1)
+    return render_template('index.html', wb_list=wb_list, pages=pages, page=page)
 
 
-@weibo_bp.route('/post')
+@weibo_bp.route('/post', methods=('POST', 'GET'))
 @login_required
 def post():
-    return render_template('post.html')
+    if request.mthod == 'POST':
+        uid = session['uid']
+        content = request.form.get('content', '').strip()
+        now = datetime.datetime.now()
+        if not content:
+            return render_template('post.html', err='微博内容不允许为空')
+
+        weibo = Weibo(uid=uid, content=content, created=now, updated=now)
+        db.session.add(weibo)
+        db.session.commit()
+        return redirect('/')
+    else:
+        return render_template('post.html')
 
 
 @weibo_bp.route('/read')
 def read():
-    return render_template('read.html')
+    wid = int(request.args.get('wid'))
+    weibo = Weibo.query.get(wid)
+    return render_template('read.html', weibo=weibo)
 
 
-@weibo_bp.route('/edit')
-@login_required
+@weibo_bp.route('/edit', methods=("POST", "GET"))
 def edit():
-    return render_template('eddit.html')
+    '''修改微博'''
+    # 检查是否是在修改自己的微博
+    if request.method == 'POST':
+        wid = int(request.form.get('wid', 0))
+    else:
+        wid = int(request.args.get('wid', 0))
+    weibo = Weibo.query.get(wid)
+    if weibo.uid != session['uid']:
+        abort(403)
+
+    if request.method == 'POST':
+        content = request.form.get('content', '').strip()
+        now = datetime.datetime.now()
+
+        # 检查微博内容是否为空
+        if not content:
+            return render_template('edit.html', weibo=weibo, err='微博内容不允许为空')
+
+        # 更新微博内容
+        weibo.content = content
+        weibo.updated = now
+        db.session.commit()
+
+        return redirect(f'/weibo/read?wid={wid}')
+    else:
+        # 获取微博，并传到模板中
+        weibo = Weibo.query.get(wid)
+        return render_template('edit.html', weibo=weibo)
+
+
+@weibo_bp.route('/delete')
+@login_required
+def delete_weibo():
+    '''删除微博'''
+    wid = int(request.args.get('wid'))
+    # 检查是否是在删除自己的微博
+    weibo = Weibo.query.get(wid)
+
+    if weibo.uid == session['uid']:
+        db.session.delete(weibo)
+        db.session.commit()
+        return redirect('/')
+    else:
+        abort(403)

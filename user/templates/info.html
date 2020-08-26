@@ -1,14 +1,25 @@
 {% extends "base.html" %}
 {% block content %}
-<form action="/user/unout">
-    <table>
-        <tr>
-            <th>姓名：范冰冰</th>
-            <th>性别：男</th>
-            <th>爱好：女</th>
-            <th>数学：12</th>
-        </tr>
-    </table>
-    <input type="submit">
-</form>
+<h1>{{ user.username }} 您好</h1>
+
+<hr/>
+
+<figure class="figure">
+    <img src="{{ user.avatar }}" class="figure-img img-fluid rounded" width="200px"/>
+</figure>
+
+<ul class="list-group">
+    {% if user.gender == '男' %}
+    <li class="list-group-item"><strong>性别</strong>：小哥哥</li>
+    {% elif user.gender == '女' %}
+    <li class="list-group-item"><strong>性别</strong>：小姐姐</li>
+    {% else %}
+    <li class="list-group-item"><strong>性别</strong>：保密</li>
+    {% endif %}
+
+    <li class="list-group-item"><strong>生日</strong>：{{ user.birthday }}</li>
+    <li class="list-group-item"><strong>城市</strong>：{{ user.city }}</li>
+    <li class="list-group-item"><strong>简介</strong>：{{ user.bio }}</li>
+    <li class="list-group-item"><strong>注册时间</strong>：{{ user.created }}</li>
+</ul>
 {% endblock %}

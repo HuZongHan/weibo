@@ -3,6 +3,7 @@ import os
 from functools import wraps
 from flask import session
 
+import random
 from flask import redirect
 
 
@@ -10,14 +11,16 @@ def make_password(password):
     '''产生一个安全密码'''
     if not isinstance(password, bytes):
         password = str(password).encode('utf8')
-    # 计算哈希值
-    hash_value = sha256(password)
 
-    # 产生随机盐 长度32位字节
+    # 计算哈希值
+    hash_value = sha256(password).hexdigest()
+
+    # 产生随机盐, 长度 32 字节
     salt = os.urandom(16).hex()
 
     # 加盐，产生安全密码
     safe_password = salt + hash_value
+
     return safe_password
 
 
@@ -31,7 +34,7 @@ def check_password(password, safe_password):
     return hash_value == safe_password[32:]
 
 
-def save_avatar(avatar_file,):
+def save_avatar(avatar_file, ):
     '''保存头像文件'''
     file_bin_data = avatar_file.stream.read()
 
@@ -39,7 +42,7 @@ def save_avatar(avatar_file,):
 
     filename = md5(file_bin_data).hexdigest()
 
-    base_dir = os.path.dirname(os.path.dirname((os.pash.abspash(__file__))))
+    base_dir = os.path.dirname(os.path.dirname((os.path.abspath(__file__))))
 
     filepath = os.path.join(base_dir, 'static', 'upload', filename)
 
@@ -49,6 +52,7 @@ def save_avatar(avatar_file,):
 
     return avatar_url
 
+
 def login_required(view_func):
     @wraps(view_func)
     def check_session(*args, **kwargs):
@@ -57,4 +61,11 @@ def login_required(view_func):
             return redirect('/user/login')
         else:
             return view_func(*args, **kwargs)
+
     return check_session
+
+
+def random_zh_str(length):
+    '''随机产生出一个中文字符串'''
+    words = [chr(random.randint(20000, 30000)) for i in range(length)]
+    return ''.join(words)

@@ -1,3 +1,4 @@
+import datetime
 from flask import Blueprint
 from flask import request
 from flask import redirect
@@ -24,21 +25,22 @@ user_bp = Blueprint(
 
 @user_bp.route('/register', methods=('POST', 'GET'))
 def register():
-    if request.mothod == 'POST':
+    if request.method == 'POST':
         username = request.form.get('username', '').strip()
         password1 = request.form.get('password1', '').strip()
         password2 = request.form.get('password2', '').strip()
-        gender = request.form.get('gender', '保密').strip()
-        city = request.form.get('city', '').strip()
+        gender = request.form.get('gender', '').strip()
         birthday = request.form.get('birthday', '').strip()
+        city = request.form.get('city', '').strip()
         bio = request.form.get('bio', '').strip()
+        now = datetime.datetime.now()  # 注册时间
 
         if not password1 or password1 != password2:
             return render_template('register.html', err='密码不符合要求')
 
-        user = User(
-            username=username, password=make_password(password=1), gender=gender,
-            city=city, birthday=birthday, bio=bio)
+        user = User(username=username, password=make_password(password1),
+                    gender=gender, birthday=birthday, city=city, bio=bio, created=now)
+
         # 保存头像
         avatar_file = request.files.get('avatar')
         if avatar_file:
@@ -59,12 +61,12 @@ def register():
 @user_bp.route('/login')
 def login():
     if request.method == 'POST':
-        nickname = request.form.get('nickname', '').strip()
+        username = request.form.get('username', '').strip()
         password = request.form.get('password', '').strip()
 
         # 获取用户
         try:
-            user = User.query.filter_by(nickname=nickname).one()
+            user = User.query.filter_by(username=username).one()
         except NoResultFound:
             return render_template('login.html', err='该用户不存在')
 
@@ -72,7 +74,7 @@ def login():
         if check_password(password, user.password):
             # 在 Session 中记录用户的登录状态
             session['uid'] = user.id
-            session['nickname'] = user.nickname
+            session['username'] = user.username
             return redirect('/user/info')
         else:
             return render_template('login.html', err='密码错误')
