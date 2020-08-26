@@ -4,7 +4,8 @@ from flask_script import Manager
 
 from libs.orm import db
 from user.views import user_bp
-
+from weibo.views import weibo_bp
+from weibo.models import Weibo
 
 app = Flask(__name__)
 app.secret_key = r'@#$T%DTRDYugwuy7w247dq7*&^t7&^*^*^'
@@ -19,6 +20,7 @@ migrate = Migrate(app, db)
 manager.add_command('db', MigrateCommand)
 
 app.register_blueprint(user_bp)
+app.register_blueprint(weibo_bp)
 
 if __name__ == "__main__":
     manager.run()
