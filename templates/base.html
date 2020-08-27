@@ -42,7 +42,7 @@
         <div>
             {% if 'uid' in session %}
             <a class="btn btn-outline-success" href="/weibo/post">发布微博</a>
-            <a class="btn btn-outline-primary" href="/user/info">{{ session.nickname }}</a>
+            <a class="btn btn-outline-primary" href="/user/info">{{ session.username }}</a>
             <a class="btn btn-outline-warning" href="/user/logout">退出</a>
             {% else %}
             <a class="btn btn-outline-primary" href="/user/register">注册</a>

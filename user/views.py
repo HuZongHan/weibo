@@ -14,6 +14,7 @@ from libs.orm import db
 from libs.pas import make_password
 from libs.pas import check_password
 from user.models import User
+from libs.pas import login_required
 
 user_bp = Blueprint(
     'user',
@@ -58,7 +59,7 @@ def register():
         return render_template('register.html')
 
 
-@user_bp.route('/login')
+@user_bp.route('/login', methods=('POST', 'GET'))
 def login():
     if request.method == 'POST':
         username = request.form.get('username', '').strip()
@@ -82,14 +83,15 @@ def login():
         return render_template('login.html')
 
 
-@user_bp.route('/unout')
-def unout():
+@user_bp.route('/logout')
+def logout():
     '''退出功能'''
     session.clear()
     return redirect('/')
 
 
 @user_bp.route('/info')
+@login_required
 def info():
     '''查看用户信息'''
     uid = session['uid']

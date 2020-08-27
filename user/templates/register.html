@@ -1,5 +1,8 @@
 {% extends "base.html" %}
+
+<!-- 填充 content -->
 {% block content %}
+
 <!-- 处理错误信息 -->
 {% if err %}
 <div class="alert alert-danger" role="alert">
@@ -11,7 +14,7 @@
     <div class="form-group row">
         <label class="col-sm-2 col-form-label">昵称</label>
         <div class="col-sm-5">
-            <input type="text" class="form-control" name="username"/>
+            <input type="text" class="form-control" name="nickname"/>
         </div>
     </div>
 
@@ -34,15 +37,15 @@
             <legend class="col-form-label col-sm-2 pt-0">性别</legend>
             <div class="col-sm-5">
                 <div class="form-check">
-                    <input class="form-check-input" type="radio" name="gender" value="男"/>
+                    <input class="form-check-input" type="radio" name="gender" value="male"/>
                     <label class="form-check-label">男</label>
                 </div>
                 <div class="form-check">
-                    <input class="form-check-input" type="radio" name="gender" value="女/>
+                    <input class="form-check-input" type="radio" name="gender" value="female"/>
                     <label class="form-check-label">女</label>
                 </div>
                 <div class="form-check disabled">
-                    <input class="form-check-input" type="radio" name="gender" value="保密" checked/>
+                    <input class="form-check-input" type="radio" name="gender" value="unknow" checked/>
                     <label class="form-check-label">保密</label>
                 </div>
             </div>
